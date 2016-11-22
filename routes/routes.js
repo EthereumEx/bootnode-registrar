@@ -5,32 +5,40 @@ var appRouter = function(app) {
     });
 
     app.get("/enodes", function(req, res) {
-	// enode://{id}@{ip}:{port}
         var enodes = "";
         
-        for (var enode in app.bootNodes)
+        for (var ip in app.bootNodes)
         {
             if (enodes.length > 0) 
             {
                enodes += ",";
             }
             
-            enodes += "enode://" + enode + "@" + app.bootNodes[enode] + ":30303";
+            var n = app.bootNodes[ip];
+            enodes += "enode://" + n.enode + "@" + ip + ":" + n.port;
         }
 
         return res.send(enodes);
     });
 
     app.post("/", function(req, res) {
-        if(!req.body.enode || !req.body.ip) {
+        if(!req.body.enode || !req.body.ip || !req.body.port) 
+        {
             return res.send({"status": "error", "message": "missing a parameter"});
-        } else {
+        }
+        else 
+        {
             if (typeof app.bootNodes === "undefined")
-	    {
+            {
                 app.bootNodes =  { };
             }
 
-            app.bootNodes[req.body.enode] = req.body.ip;
+            app.bootNodes[req.body.ip] = {
+                "enode": req.body.enode,
+                "port" : req.body.port,
+                "updated" : new Date().toJSON()
+            } 
+            
             return res.send(app.bootNodes);
         }
     });
