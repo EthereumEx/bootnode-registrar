@@ -82,9 +82,16 @@ enodeUpdater.prototype.Run = function (obj) {
 
 if (process.env.BOOTNODE_URL)
 {
-    var client = new web3Client();
-    var enode = new enodeUpdater(client);
-    enode.Run(enode);
+    if (!process.env.ENABLE_MINER)
+    {
+        var client = new web3Client();
+        var enode = new enodeUpdater(client);
+        enode.Run(enode);
+    }
+    else
+    {
+        console.log("Do not register. Running as miner.")
+    }
 }
 else
 {
