@@ -2,6 +2,7 @@ var Web3 = require('web3');
 var net = require('net');
 var fs = require('fs');
 var request = require('request');
+var sleep = require('sleep');
 var async = require('async');
 
 function web3Client() {
@@ -90,7 +91,11 @@ if (process.env.BOOTNODE_URL)
     }
     else
     {
-        console.log("Do not register. Running as miner.")
+        while (true)
+        {
+            console.log("Do not register. Running as miner.");
+            sleep.sleep(15);
+        }
     }
 }
 else
