@@ -3,12 +3,16 @@ var net = require('net');
 var fs = require('fs');
 var request = require('request');
 var sleep = require('sleep');
-var async = require('async');
 
 function web3Client() {
+    this.failCount = 0;
 }
 
 web3Client.prototype.Refresh = function () {
+    if (this.failCount > 15)
+    {
+        throw new Error("Too many exceptions. . . Exiting")
+    }
 
     var client = net.Socket();
     var web3 = new Web3(new Web3.providers.IpcProvider("/home/geth/.geth/geth.ipc", client));
@@ -56,7 +60,8 @@ enodeUpdater.prototype.Run = function (obj) {
     web3.admin.getNodeInfo(function (error, result) {
         var timeout = 1000 * 10;
         if (error) {
-            console.log(error);
+            web3.failCount ++;
+            console.log("Fail count: " + web3.failCount + " " + error);
             runLoop(obj, 500);
         }
         else {
