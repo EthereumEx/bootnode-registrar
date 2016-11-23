@@ -31,12 +31,21 @@ web3Client.prototype.Refresh = function () {
     this.admin = web3.admin;
 }
 
-function updateEnode(data, callback) {
+function updateEnode(url, data, callback) {
+    console.log("update enode - " + url);
     request.post(
-        process.env.BOOTNODE_URL,
-        {  json : data },
+        url,
+        {  
+            json : data,
+            timeout : 1000 
+        },
         function (error, response, body) {
             var e = error || response.statusCode != 200;
+
+            if (e)
+            {
+                console.log(error);
+            }
             callback(e, response);
         }
     )
@@ -70,16 +79,18 @@ enodeUpdater.prototype.Run = function (obj) {
                 port: result.ports.listener,
                 ip: process.env.HOST_IP
             }
-            updateEnode(data, function(err, result){
-                if (err)
-                {
-                    runLoop(obj, 1000 * 3);
-                }
-                else
-                {
-                    console.log(data);
-                    runLoop(obj, 1000 * 5);
-                }
+            updateEnode("http://localhost:3001", data, function(){
+                updateEnode(process.env.BOOTNODE_URL, data, function(err, result){
+                    if (err)
+                    {
+                        runLoop(obj, 1000 * 3);
+                    }
+                    else
+                    {
+                        console.log(data);
+                        runLoop(obj, 1000 * 15);
+                    }
+                });
             });
         }
     });

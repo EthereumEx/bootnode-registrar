@@ -51,7 +51,7 @@ var appRouter = function(app) {
             app.bootNodes[req.body.ip] = {
                 "enode": req.body.enode,
                 "port" : req.body.port,
-                "expires" : moment.utc().add(15, "seconds").toJSON()
+                "expires" : moment.utc().add(3, "minutes").toJSON()
             }             
 
             return res.send(app.bootNodes);
