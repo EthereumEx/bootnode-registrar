@@ -67,12 +67,12 @@ enodeUpdater.prototype.Run = function (obj) {
             updateEnode(data, function(err, result){
                 if (err)
                 {
-                    runLoop(obj, 1000 * 5);
+                    runLoop(obj, 1000 * 3);
                 }
                 else
                 {
                     console.log(data);
-                    runLoop(obj, 1000 * 10);
+                    runLoop(obj, 1000 * 5);
                 }
             });
         }

@@ -1,13 +1,28 @@
+var moment = require('moment');
 var appRouter = function(app) {
     
+    function getBootNodes()
+    {
+        var expired = moment.utc().toJSON();
+        for (var ip in app.bootNodes)
+        {
+            if (app.bootNodes[ip].expires <= expired)
+            {
+                delete app.bootNodes[ip];
+            }
+        }
+
+        return app.bootNodes;
+    }
+
     app.get("/", function(req, res) {
-        res.send(app.bootNodes);
+        res.send(getBootNodes());
     });
 
     app.get("/enodes", function(req, res) {
         var enodes = "";
         
-        for (var ip in app.bootNodes)
+        for (var ip in getBootNodes())
         {
             if (enodes.length > 0) 
             {
@@ -32,13 +47,13 @@ var appRouter = function(app) {
             {
                 app.bootNodes =  { };
             }
-
+            
             app.bootNodes[req.body.ip] = {
                 "enode": req.body.enode,
                 "port" : req.body.port,
-                "updated" : new Date().toJSON()
-            } 
-            
+                "expires" : moment.utc().add(15, "seconds").toJSON()
+            }             
+
             return res.send(app.bootNodes);
         }
     });
