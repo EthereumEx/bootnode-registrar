@@ -77,20 +77,19 @@ enodeUpdater.prototype.Run = function (obj) {
             var data = {
                 enode: result.id,
                 port: result.ports.listener,
-                ip: process.env.HOST_IP
+                ip: process.env.HOST_IP,
+                miner : false || process.env.ENABLE_MINER
             }
-            updateEnode("http://localhost:3001", data, function(){
-                updateEnode(process.env.BOOTNODE_URL, data, function(err, result){
-                    if (err)
-                    {
-                        runLoop(obj, 1000 * 3);
-                    }
-                    else
-                    {
-                        console.log(data);
-                        runLoop(obj, 1000 * 15);
-                    }
-                });
+            updateEnode(process.env.BOOTNODE_URL, data, function(err, result){
+                if (err)
+                {
+                    runLoop(obj, 1000 * 3);
+                }
+                else
+                {
+                    console.log(data);
+                    runLoop(obj, 1000 * 15);
+                }
             });
         }
     });
@@ -99,20 +98,9 @@ enodeUpdater.prototype.Run = function (obj) {
 
 if (process.env.BOOTNODE_URL)
 {
-    if (!process.env.ENABLE_MINER)
-    {
-        var client = new web3Client();
-        var enode = new enodeUpdater(client);
-        enode.Run(enode);
-    }
-    else
-    {
-        while (true)
-        {
-            console.log("Do not register. Running as miner.");
-            sleep.sleep(15);
-        }
-    }
+    var client = new web3Client();
+    var enode = new enodeUpdater(client);
+    enode.Run(enode);
 }
 else
 {
