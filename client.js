@@ -78,6 +78,8 @@ enodeUpdater.prototype.Run = function (obj) {
                 enode: result.id,
                 port: result.ports.listener,
                 ip: process.env.HOST_IP,
+                publicIp : process.env.BOOTNODE_PUBLIC_IP,
+                network : process.env.BOOTNODE_NETWORK,
                 miner : false || process.env.ENABLE_MINER
             }
             updateEnode(process.env.BOOTNODE_URL, data, function(err, result){
@@ -104,5 +106,5 @@ if (process.env.BOOTNODE_URL)
 }
 else
 {
-    console.log("No BOOTNODE_URL provided");
+    console.log("No BOOTNODE_URL,BOOTNODE_NETWORK or BOOTNODE_PUBLIC_IP provided");
 }
