@@ -14,21 +14,27 @@ web3Client.prototype.Refresh = function () {
         throw new Error("Too many exceptions. . . Exiting")
     }
 
-    var client = net.Socket();
-    var web3 = new Web3(new Web3.providers.IpcProvider("/home/geth/.geth/geth.ipc", client));
+    if (!this._web3)
+    {
+        var client = net.Socket();
+        var web3 = new Web3(new Web3.providers.IpcProvider("/home/geth/.geth/geth.ipc", client));
 
-    web3._extend({
-        property: 'admin',
-        properties:
-        [
-            new web3._extend.Property({
-                name: 'nodeInfo',
-                getter: 'admin_nodeInfo'
-            }),
-        ]
-    });
+        web3._extend({
+            property: 'admin',
+            properties:
+            [
+                new web3._extend.Property({
+                    name: 'nodeInfo',
+                    getter: 'admin_nodeInfo'
+                }),
+            ]
+        });
 
-    this.admin = web3.admin;
+        this._web3 = web3
+        this.admin = web3.admin;
+    }
+
+    this._web3.reset();
 }
 
 function updateEnode(url, data, callback) {
