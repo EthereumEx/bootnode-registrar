@@ -11,4 +11,5 @@ $req = Invoke-WebRequest -Uri "http://localhost:3000" -Method Post -Body $data -
 @(
     ((Invoke-WebRequest -Uri "http://localhost:3000/enodes").Content),
     ((Invoke-WebRequest -Uri "http://localhost:3000/enodes?network=abc").Content)
+    ((Invoke-WebRequest -Uri "http://localhost:3000/staticenodes?network=abc").Content)
 )
