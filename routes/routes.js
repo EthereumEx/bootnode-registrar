@@ -1,4 +1,5 @@
 var moment = require('moment');
+var os = require('os');
 var appRouter = function (app) {
 
     function getBootNodes() {
@@ -56,6 +57,18 @@ var appRouter = function (app) {
             output.push(asEnodeString(nodes[i]))
         }
         return res.json(output);
+    });
+
+    app.get("/parityenodes", function (req, res) {
+        var network = req.query.network;
+        var output = "";
+
+        var nodes = getEnodes(network);
+        for(var i in nodes)
+        {
+            output += asEnodeString(nodes[i]) + "\n";
+        }
+        return res.send(output);
     });
 
     app.get("/enodes", function (req, res) {
