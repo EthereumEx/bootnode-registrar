@@ -4,6 +4,13 @@ var fs = require('fs');
 var request = require('request');
 var sleep = require('sleep');
 
+var ipcPath = "/home/geth/.geth/geth.ipc";
+
+if (process.env.ETH_IPC_PATH)
+{
+    ipcPath = process.env.ETH_IPC_PATH;
+}
+
 function web3Client() {
     this.failCount = 0;
 }
@@ -17,10 +24,10 @@ web3Client.prototype.Refresh = function () {
     if (!this._web3)
     {
         var client = net.Socket();
-        var web3 = new Web3(new Web3.providers.IpcProvider("/home/geth/.geth/geth.ipc", client));
+        var web3 = new Web3(new Web3.providers.IpcProvider(ipcPath, client));
 
         web3._extend({
-            property: 'admin',
+            property: 'geth',
             properties:
             [
                 new web3._extend.Property({
@@ -28,10 +35,22 @@ web3Client.prototype.Refresh = function () {
                     getter: 'admin_nodeInfo'
                 }),
             ]
+        },
+        {
+            property: 'parity',
+            properties:
+            [
+                new web3._extend.Property({
+                    name: 'nodeInfo',
+                    getter: 'parity_enode'
+                }),
+            ]
         });
 
         this._web3 = web3
-        this.admin = web3.admin;
+        this.default = web3.geth;
+        this.geth = web3.geth;
+        this.parity = web3.parity;
     }
 
     this._web3.reset();
@@ -69,10 +88,48 @@ function runLoop(obj, timeout)
     }, timeout);
 }
 
+function readNode(web3, fn)
+{
+    web3.Refresh();
+    
+    web3.geth.getNodeInfo(function (error, result) {
+        if (error) {
+            web3.parity.getNodeInfo(function (error, result){
+                if (error)
+                {
+                    fn(error, result);    
+                }
+                else
+                {
+                    var pattern = /enode\:\/\/([^@]+)@[^:]+:(.+)/g;
+                    var match = pattern.exec(result.body);
+                    
+                    if (match)
+                    {
+                        fn(error, {
+                            enode: match[1],
+                            port: match[2]
+                        });
+                    }
+                    else
+                    {
+                        fn("Failed to match", result);
+                    }
+                }
+            });
+        }
+        else {
+            fn(error, {
+                enode: result.id,
+                port: result.ports.listener
+            });
+        }
+    });
+}
+
 enodeUpdater.prototype.Run = function (obj) {
     var web3 = obj.web3;
-    web3.Refresh();
-    web3.admin.getNodeInfo(function (error, result) {
+    readNode(obj.web3, function (error, result) {
         var timeout = 1000 * 10;
         if (error) {
             web3.failCount ++;
@@ -81,8 +138,8 @@ enodeUpdater.prototype.Run = function (obj) {
         }
         else {
             var data = {
-                enode: result.id,
-                port: result.ports.listener,
+                enode: result.enode,
+                port: result.port,
                 ip: process.env.HOST_IP,
                 publicIp : process.env.BOOTNODE_PUBLIC_IP,
                 network : process.env.BOOTNODE_NETWORK,
