@@ -35,8 +35,9 @@ web3Client.prototype.Refresh = function () {
                     getter: 'admin_nodeInfo'
                 }),
             ]
-        },
-        {
+        });
+
+        web3._extend({
             property: 'parity',
             properties:
             [
@@ -164,8 +165,10 @@ enodeUpdater.prototype.Run = function (obj) {
 if (process.env.BOOTNODE_URL)
 {
     var client = new web3Client();
-    var enode = new enodeUpdater(client);
-    enode.Run(enode);
+    client.Refresh();
+    console.log(client);
+    //var enode = new enodeUpdater(client);
+    //enode.Run(enode);
 }
 else
 {
