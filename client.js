@@ -165,10 +165,8 @@ enodeUpdater.prototype.Run = function (obj) {
 if (process.env.BOOTNODE_URL)
 {
     var client = new web3Client();
-    client.Refresh();
-    console.log(client);
-    //var enode = new enodeUpdater(client);
-    //enode.Run(enode);
+    var enode = new enodeUpdater(client);
+    enode.Run(enode);
 }
 else
 {
