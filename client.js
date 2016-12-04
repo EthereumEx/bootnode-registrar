@@ -139,7 +139,7 @@ enodeUpdater.prototype.Run = function (obj) {
             runLoop(obj, 500);
         }
         else {
-            var listenPort = result.port.listener;
+            var listenPort = result.ports.listener;
             if (!listenPort)
             {
                 listenPort = 30303;
