@@ -139,9 +139,15 @@ enodeUpdater.prototype.Run = function (obj) {
             runLoop(obj, 500);
         }
         else {
+            var listenPort = result.port.listener;
+            if (!listenPort)
+            {
+                listenPort = 30303;
+            }
+
             var data = {
                 enode: result.id,
-                port: result.ports.listener,
+                port: listenPort,
                 ip: process.env.HOST_IP,
                 publicIp: process.env.BOOTNODE_PUBLIC_IP,
                 network: process.env.BOOTNODE_NETWORK,
