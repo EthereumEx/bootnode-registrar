@@ -4,11 +4,7 @@ var fs = require('fs');
 var request = require('request');
 var sleep = require('sleep');
 
-var ipcPath = "/home/geth/.geth/geth.ipc";
-
-if (process.env.ETH_IPC_PATH) {
-    ipcPath = process.env.ETH_IPC_PATH;
-}
+let ipcPath = "/home/geth/.geth/geth.ipc";
 
 function web3Client() {
     this.failCount = 0;
@@ -166,6 +162,10 @@ enodeUpdater.prototype.Run = function (obj) {
     });
 };
 
+
+if (process.env.ETH_IPC_PATH) {
+    ipcPath = process.env.ETH_IPC_PATH;
+}
 
 if (process.env.BOOTNODE_URL) {
     var client = new web3Client();
