@@ -90,7 +90,7 @@ var appRouter = function (app) {
 
     app.post("/", function (req, res) {
         if (!req.body.enode || !req.body.ip || !req.body.port || !req.body.network) {
-            return res.send({ "status": "error", "message": "missing a parameter" });
+            return res.status(400).send({ "status": "error", "message": "missing a parameter" });
         }
         else {
             if (typeof app.bootNodes === "undefined") {
