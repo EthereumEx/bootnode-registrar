@@ -1,21 +1,21 @@
 {
-  "name": "nodeshare",
+  "name": "bootnode-registrar",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
   "scripts": {
+    "start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "body-parser": "^1.15.2",
-    "express": "^4.14.0",
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
     "http": "0.0.0",
-    "moment": "^2.17.0",
+    "moment": "^2.19.4",
     "os": "^0.1.1",
-    "request": "^2.79.0",
-    "sleep": "^5.0.0",
-    "web3": "^0.17.0-beta"
+    "request": "^2.83.0",
+    "web3": "^1.0.0-beta.26"
   }
 }
